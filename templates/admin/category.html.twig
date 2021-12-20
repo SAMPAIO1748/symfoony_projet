@@ -1,0 +1,12 @@
+{% extends "admin/base.html.twig" %}
+
+{% block main %}
+
+	<h2>{{category.name}}</h2>
+	<p>{{category.description}}</p>
+
+	{% for product in category.products %}
+		<h3>{{product.name}}</h3>
+	{% endfor %}
+
+{% endblock %}

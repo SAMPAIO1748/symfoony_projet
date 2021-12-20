@@ -116,7 +116,7 @@ class AdminLicenceController extends AbstractController
             return $this->redirectToRoute("admin_list_licence");
         }
 
-        return $this->render("front/licenceform.html.twig", ['licenceForm' => $licenceForm->createView()]);
+        return $this->render("admin/licenceform.html.twig", ['licenceForm' => $licenceForm->createView()]);
     }
 
     /**
