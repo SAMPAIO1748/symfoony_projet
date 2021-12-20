@@ -54,7 +54,7 @@ class AdminLicenceController extends AbstractController
             $mediaFile = $licenceForm->get('media')->getData();
 
             if ($mediaFile) {
-                $originalFilename = pathinfo($mediaFile->getOriginalName(), PATHINFO_FILENAME);
+                $originalFilename = pathinfo($mediaFile->getClientOriginalName(), PATHINFO_FILENAME);
 
                 $safeFilename = $sluggerInterface->slug($originalFilename);
 
@@ -96,7 +96,7 @@ class AdminLicenceController extends AbstractController
             $mediaFile = $licenceForm->get('media')->getData();
 
             if ($mediaFile) {
-                $originalFilename = pathinfo($mediaFile->getOriginalName(), PATHINFO_FILENAME);
+                $originalFilename = pathinfo($mediaFile->getClientOriginalName(), PATHINFO_FILENAME);
 
                 $safeFilename = $sluggerInterface->slug($originalFilename);
 
