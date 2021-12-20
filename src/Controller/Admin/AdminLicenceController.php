@@ -120,7 +120,7 @@ class AdminLicenceController extends AbstractController
     }
 
     /**
-     * @Route("/admin/delete/{id}, name="admin_delete_licence)
+     * @Route("/admin/delete/{id}", name="admin_delete_licence")
      */
     public function deleteLicence($id, EntityManagerInterface $entityManagerInterface, LicenceRepository $licenceRepository)
     {
