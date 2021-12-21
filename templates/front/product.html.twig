@@ -29,6 +29,13 @@
 			{{ comment.date | date('d-m-Y') }}</h5>
 		<p>{{ comment.content }}</p>
 
+		{% if app.user is same as(comment.user) %}
+
+			<a href="{{path('update_comment', {'id' : comment.id})}}">Modifier le commentaire</a>
+			<a href="{{path('delete_comment', {'id' : comment.id})}}">Supprimer le commentaire</a>
+
+		{% endif %}
+
 		<hr>
 	{% endfor %}
 

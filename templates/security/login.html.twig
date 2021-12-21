@@ -38,19 +38,30 @@
 
 	{% if app.user %}
 		<a href="{{ path('update_user', {'id' : app.user.id }) }}">Modifiez votre compte</a>
+		<hr>
+
+		{% for comment in app.user.comments %}
+
+			<h3>{{ comment.product.name }}</h3>
+			<p>{{ comment.content }}</p>
+
+			<a href="{{ path('front_update_comment', {'id' : comment.id}) }}">Modifier le commentaire</a>
+			<a href="{{ path('front_delete_comment', {'id' : comment.id}) }}">Supprimer le commentaire</a>
+			<hr>
+		{% endfor %}
 	{% endif %}
 
 
 	{#
-													        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-													        See https://symfony.com/doc/current/security/remember_me.html
-													
-													        <div class="checkbox mb-3">
-													            <label>
-													                <input type="checkbox" name="_remember_me"> Remember me
-													            </label>
-													        </div>
-													    #}
+																					        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+																					        See https://symfony.com/doc/current/security/remember_me.html
+																					
+																					        <div class="checkbox mb-3">
+																					            <label>
+																					                <input type="checkbox" name="_remember_me"> Remember me
+																					            </label>
+																					        </div>
+																					    #}
 
 
 {% endblock %}
