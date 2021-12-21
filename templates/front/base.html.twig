@@ -9,7 +9,10 @@
 	<body>
 
 		<header>
-			<h1>Bienvenue</h1>
+			{% for category in gcategories.getAll %}
+				<h3>{{category.name}}
+				</h3>
+			{% endfor %}
 		</header>
 
 		<main>
