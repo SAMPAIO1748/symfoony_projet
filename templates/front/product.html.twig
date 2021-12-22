@@ -16,6 +16,17 @@
 		<span class="js-likes">{{ product.likes | length }}</span>
 		<span class="js-label">J'aime</span>
 	</a>
+
+	<a href="#" class="btn btn-link js-dislikes">
+		{% if app.user and product.isDislikeByUser(app.user) %}
+			<i class="fas fa-thumbs-down"></i>
+		{% else %}
+			<i class="far fa-thumbs-down"></i>
+		{% endif %}
+
+		<span class="js-dislikes">{{ product.dislikes | length }}</span>
+		<span class="js-label">Je n'aime pas</span>
+	</a>
 	<h3>{{product.price}}
 		€</h3>
 
