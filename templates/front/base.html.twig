@@ -10,9 +10,14 @@
 
 		<header>
 			{% for category in gcategories.getAll %}
-				<h3>{{category.name}}
+				<h3>
+					{{category.name}}
 				</h3>
 			{% endfor %}
+			<form action="{{ path('front_search') }}" method="get">
+				<input type="text" name="term" id="">
+				<input type="submit" value="Rechercher">
+			</form>
 		</header>
 
 		<main>
