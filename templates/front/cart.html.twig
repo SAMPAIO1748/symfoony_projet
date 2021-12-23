@@ -1,0 +1,23 @@
+{% extends "front/base.html.twig" %}
+
+{% block main %}
+	<pre>
+    {{ dump(items) }}
+</pre>
+	{% if items == [] %}
+		<h3>Votre panier est vide</h3>
+	{% else %}
+		{% for item in items %}
+
+
+			<h2>{{ item.product.name }}</h2>
+			<h2>{{ item.product.price }}</h2>
+			<img src="{{ item.product.media[0].src }}" alt="{{ item.product.name }}">
+			<h3>{{item.quantity}}</h3>
+			<a href="{{ path('delete_cart', {'id' : item.product.id} ) }}">Supprimer</a>
+
+		{% endfor %}
+	{% endif %}
+
+
+{% endblock %}
