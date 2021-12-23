@@ -27,7 +27,7 @@ class ProductType extends AbstractType
                 'class' => Category::class,
                 'choice_label' => 'name'
             ])
-            ->add('Enregistrer', SubmitType::class);;
+            ->add('Enregistrer', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
