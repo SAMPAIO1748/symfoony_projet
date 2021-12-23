@@ -17,7 +17,7 @@
 		<span class="js-label">J'aime</span>
 	</a>
 
-	<a href="#" class="btn btn-link js-dislikes">
+	<a href="{{ path('product_dislike', {'id' : product.id}) }}" class="btn btn-link js-dislikes">
 		{% if app.user and product.isDislikeByUser(app.user) %}
 			<i class="fas fa-thumbs-down"></i>
 		{% else %}
@@ -89,6 +89,21 @@ icone.classList.replace('fas', 'far')
 } else {
 icone.classList.replace('far', 'fas')
 }
+
+if (response.data.message == "like ajouté et dislike supprimé") {
+const spanCount3 = document.querySelector('span.js-dislikes');
+const icone3 = document.querySelector('i.fa-thumbs-down');
+
+spanCount3.textContent = response.data.dislikes;
+
+if (icone3.classList.contains('fas')) {
+icone3.classList.replace('fas', 'far')
+} else {
+icone3.classList.replace('far', 'fas')
+}
+}
+
+
 }).catch(function (error) {
 if (error.response.status === 403) {
 window.alert("Connexion requise");
@@ -98,8 +113,43 @@ window.alert("Une erreur s'est produite")
 })
 }
 
+function onClickDislike(event) {
+event.preventDefault();
+
+const url1 = this.href;
+const spanCount1 = this.querySelector('span.js-dislikes');
+const icone1 = this.querySelector('i');
+
+axios.get(url1).then(function (response) {
+spanCount1.textContent = response.data.dislikes;
+
+if (icone1.classList.contains('fas')) {
+icone1.classList.replace('fas', 'far');
+} else {
+icone1.classList.replace('far', 'fas');
+}
+
+if (response.data.message == "like supprimé et dislike ajouté") {
+const spanCount2 = document.querySelector('span.js-likes');
+const icone2 = document.querySelector('i.fa-thumbs-up');
+
+spanCount2.textContent = response.data.likes;
+
+if (icone2.classList.contains('fas')) {
+icone2.classList.replace('fas', 'far');
+} else {
+icone2.classList.replace('far', 'fas');
+}
+
+}
+
+})
+}
+
 
 document.querySelector('a.js-likes').addEventListener('click', onClickLike);
+
+document.querySelector('a.js-dislikes').addEventListener('click', onClickDislike);
 		</script>
 
 	{% endblock %}

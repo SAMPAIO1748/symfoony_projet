@@ -3,8 +3,10 @@
 namespace App\Controller\Front;
 
 use App\Entity\Comment;
+use App\Entity\Dislike;
 use App\Entity\Like;
 use App\Form\CommentType;
+use App\Repository\DislikeRepository;
 use App\Repository\LikeRepository;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
@@ -76,7 +78,8 @@ class ProductController extends AbstractController
         $id,
         ProductRepository $productRepository,
         EntityManagerInterface $entityManagerInterface,
-        LikeRepository $likeRepository
+        LikeRepository $likeRepository,
+        DislikeRepository $dislikeRepository
     ) {
 
         $product = $productRepository->find($id);
@@ -107,6 +110,32 @@ class ProductController extends AbstractController
             ], 200);
         }
 
+        if ($product->isDislikeByUser($user)) {
+            $dislike = $dislikeRepository->findOneBy(
+                [
+                    'product' => $product,
+                    'user' => $user
+                ]
+            );
+
+            $entityManagerInterface->remove($dislike);
+
+            $like = new Like();
+
+            $like->setProduct($product);
+            $like->setUser($user);
+
+            $entityManagerInterface->persist($like);
+            $entityManagerInterface->flush();
+
+            return $this->json([
+                'code' => 200,
+                'message' => 'like ajouté et dislike supprimé',
+                'likes' => $likeRepository->count(['product' => $product]),
+                'dislikes' => $dislikeRepository->count(['product' => $product])
+            ], 200);
+        }
+
         $like = new Like();
 
         $like->setProduct($product);
@@ -120,5 +149,78 @@ class ProductController extends AbstractController
             'message' => "Like enregistré",
             'likes' => $likeRepository->count(['product' => $product])
         ]);
+    }
+
+    /**
+     * @Route("/front/dislike/product/{id}", name="product_dislike")
+     */
+    public function dislikeProduct(
+        $id,
+        ProductRepository $productRepository,
+        EntityManagerInterface $entityManagerInterface,
+        DislikeRepository $dislikeRepository,
+        LikeRepository $likeRepository
+    ) {
+        $product = $productRepository->find($id);
+        $user = $this->getUser();
+
+        if (!$user) {
+            return $this->json([
+                'code' => 403,
+                'message' => "Vous devez vous connecter"
+            ], 403);
+        }
+
+        if ($product->isDislikeByUser($user)) {
+            $dislike = $dislikeRepository->findOneBy([
+                'product' => $product,
+                'user' => $user
+            ]);
+
+            $entityManagerInterface->remove($dislike);
+            $entityManagerInterface->flush();
+
+            return $this->json([
+                'code' => 200,
+                'message' => "Le dislike a été supprimé",
+                'dislikes' => $dislikeRepository->count(['product' => $product])
+            ], 200);
+        }
+
+        if ($product->isLikeByUser($user)) {
+            $like = $likeRepository->findOneBy([
+                'product' => $product,
+                'user' => $user
+            ]);
+
+            $entityManagerInterface->remove($like);
+
+            $dislike = new Dislike();
+            $dislike->setProduct($product);
+            $dislike->setUser($user);
+
+            $entityManagerInterface->persist($dislike);
+            $entityManagerInterface->flush();
+
+            return $this->json([
+                'code' => 200,
+                'message' => "like supprimé et dislike ajouté",
+                'dislikes' => $dislikeRepository->count(['product' => $product]),
+                'likes' => $likeRepository->count(['product' => $product])
+            ], 200);
+        }
+
+        $dislike = new Dislike();
+        $dislike->setProduct($product);
+        $dislike->setUser($user);
+
+        $entityManagerInterface->persist($dislike);
+        $entityManagerInterface->flush();
+
+        return $this->json([
+            'code' => 200,
+            'message' => "Le dislike a été ajouté",
+            'dislikes' => $dislikeRepository->count(['product' => $product])
+        ], 200);
     }
 }
