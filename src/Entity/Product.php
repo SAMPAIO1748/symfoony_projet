@@ -66,12 +66,18 @@ class Product
      */
     private $dislikes;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Command::class, mappedBy="products")
+     */
+    private $commands;
+
     public function __construct()
     {
         $this->media = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->likes = new ArrayCollection();
         $this->dislikes = new ArrayCollection();
+        $this->commands = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -279,5 +285,32 @@ class Product
         }
 
         return false;
+    }
+
+    /**
+     * @return Collection|Command[]
+     */
+    public function getCommands(): Collection
+    {
+        return $this->commands;
+    }
+
+    public function addCommand(Command $command): self
+    {
+        if (!$this->commands->contains($command)) {
+            $this->commands[] = $command;
+            $command->addProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommand(Command $command): self
+    {
+        if ($this->commands->removeElement($command)) {
+            $command->removeProduct($this);
+        }
+
+        return $this;
     }
 }
