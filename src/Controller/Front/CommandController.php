@@ -3,6 +3,7 @@
 namespace App\Controller\Front;
 
 use App\Entity\Command;
+use App\Repository\CommandRepository;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -94,11 +95,14 @@ class CommandController extends AbstractController
         ProductRepository $productRepository,
         UserRepository $userRepository,
         Request $request,
-        EntityManagerInterface $entityManagerInterface
+        EntityManagerInterface $entityManagerInterface,
+        CommandRepository $commandRepository
     ) {
         $command = new Command();
 
-        $id = $command->getId();
+        $commands = $commandRepository->findAll();
+        $number = count($commands);
+        $id = $number + 1;
 
         $command->setNumber("Command-" . $id);
         $command->setDate(new \DateTime("NOW"));
