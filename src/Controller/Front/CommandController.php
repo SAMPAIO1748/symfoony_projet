@@ -114,6 +114,11 @@ class CommandController extends AbstractController
             $product = $productRepository->find($id_product);
             $price_product = $product->getPrice();
             $price = $price + ($price_product * $quantity);
+            $product_stock = $product->getStock();
+            $product_stock_final = $product_stock - $quantity;
+            $product->setStock($product_stock_final);
+            $entityManagerInterface->persist($product);
+            $entityManagerInterface->flush();
             unset($cart[$id_product]);
             $sessionInterface->set('cart', $cart);
             $command->addProduct($product);
