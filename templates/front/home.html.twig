@@ -8,7 +8,7 @@
 		{% for product  in categorie.products | slice(0, 3) %}
 			<div class="col">
 				<a href="{{ path('front_show_product', {'id' : product.id}) }}">
-					<img src="{{ product.media[0].src }}" alt="{{ product.media[0].alt }}">
+					<img src="{{ asset("media/" ~ product.media[0].src) }}" alt="{{ product.media[0].alt }}">
 				</a>
 			</div>
 		{% endfor %}

@@ -1,0 +1,10 @@
+{% extends "admin/base.html.twig" %}
+
+{% block main %}
+
+
+	<img src="{{ asset("media/" ~ media.src) }}" alt="{{ media.alt }}">
+	<h2>{{ media.title }}</h2>
+	<h2>{{ media.product.name }}</h2>
+
+{% endblock %}
