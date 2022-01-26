@@ -71,13 +71,18 @@ class Product
      */
     private $commands;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Card::class, mappedBy="product")
+     */
+    private $cards;
+
     public function __construct()
     {
         $this->media = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->likes = new ArrayCollection();
         $this->dislikes = new ArrayCollection();
-        $this->commands = new ArrayCollection();
+        $this->cards = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -288,27 +293,30 @@ class Product
     }
 
     /**
-     * @return Collection|Command[]
+     * @return Collection|Card[]
      */
-    public function getCommands(): Collection
+    public function getCards(): Collection
     {
-        return $this->commands;
+        return $this->cards;
     }
 
-    public function addCommand(Command $command): self
+    public function addCard(Card $card): self
     {
-        if (!$this->commands->contains($command)) {
-            $this->commands[] = $command;
-            $command->addProduct($this);
+        if (!$this->cards->contains($card)) {
+            $this->cards[] = $card;
+            $card->setProduct($this);
         }
 
         return $this;
     }
 
-    public function removeCommand(Command $command): self
+    public function removeCard(Card $card): self
     {
-        if ($this->commands->removeElement($command)) {
-            $command->removeProduct($this);
+        if ($this->cards->removeElement($card)) {
+            // set the owning side to null (unless already changed)
+            if ($card->getProduct() === $this) {
+                $card->setProduct(null);
+            }
         }
 
         return $this;

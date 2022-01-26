@@ -65,13 +65,13 @@ class Command
     private $user;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Product::class, inversedBy="commands")
+     * @ORM\OneToMany(targetEntity=Card::class, mappedBy="command")
      */
-    private $products;
+    private $cards;
 
     public function __construct()
     {
-        $this->products = new ArrayCollection();
+        $this->cards = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -188,25 +188,31 @@ class Command
     }
 
     /**
-     * @return Collection|Product[]
+     * @return Collection|Card[]
      */
-    public function getProducts(): Collection
+    public function getCards(): Collection
     {
-        return $this->products;
+        return $this->cards;
     }
 
-    public function addProduct(Product $product): self
+    public function addCard(Card $card): self
     {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
+        if (!$this->cards->contains($card)) {
+            $this->cards[] = $card;
+            $card->setCommand($this);
         }
 
         return $this;
     }
 
-    public function removeProduct(Product $product): self
+    public function removeCard(Card $card): self
     {
-        $this->products->removeElement($product);
+        if ($this->cards->removeElement($card)) {
+            // set the owning side to null (unless already changed)
+            if ($card->getCommand() === $this) {
+                $card->setCommand(null);
+            }
+        }
 
         return $this;
     }

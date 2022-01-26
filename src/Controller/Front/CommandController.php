@@ -2,6 +2,7 @@
 
 namespace App\Controller\Front;
 
+use App\Entity\Card;
 use App\Entity\Command;
 use App\Repository\CommandRepository;
 use App\Repository\ProductRepository;
@@ -10,6 +11,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CommandController extends AbstractController
@@ -96,9 +99,12 @@ class CommandController extends AbstractController
         UserRepository $userRepository,
         Request $request,
         EntityManagerInterface $entityManagerInterface,
-        CommandRepository $commandRepository
+        CommandRepository $commandRepository,
+        MailerInterface $mailerInterface
     ) {
         $command = new Command();
+
+
 
         $commands = $commandRepository->findAll();
         $number = count($commands);
@@ -110,18 +116,26 @@ class CommandController extends AbstractController
         $cart = $sessionInterface->get('cart', []);
         $price = 0;
 
+        $command->setPrice($price);
+        $entityManagerInterface->persist($command);
+        $entityManagerInterface->flush();
+
         foreach ($cart as $id_product => $quantity) {
+            $card = new Card();
+            $card->setCommand($command);
             $product = $productRepository->find($id_product);
+            $card->setProduct($product);
+            $card->setProductAmount($quantity);
             $price_product = $product->getPrice();
             $price = $price + ($price_product * $quantity);
             $product_stock = $product->getStock();
             $product_stock_final = $product_stock - $quantity;
             $product->setStock($product_stock_final);
             $entityManagerInterface->persist($product);
+            $entityManagerInterface->persist($card);
             $entityManagerInterface->flush();
             unset($cart[$id_product]);
             $sessionInterface->set('cart', $cart);
-            $command->addProduct($product);
         }
 
         $command->setPrice($price);
@@ -133,6 +147,14 @@ class CommandController extends AbstractController
             $user_true = $userRepository->findOneBy(['email' => $user_mail]);
 
             $command->setUser($user_true);
+
+            $email = (new Email())
+                ->from('test@test.com')
+                ->to($user_mail)
+                ->subject('commande')
+                ->html('<p>Commande de ' . $price . 'avec :');
+
+            $mailerInterface->send($email);
         } else {
             $name = $request->request->get('name');
             $email = $request->request->get('email');
@@ -145,7 +167,17 @@ class CommandController extends AbstractController
             $command->setAdress($adress);
             $command->setCity($city);
             $command->setZipcode($zipcode);
+
+            $email = (new Email())
+                ->from('test@test.com')
+                ->to($email)
+                ->subject('commande')
+                ->html('<p>Commande de ' . $price . 'avec :');
+
+            $mailerInterface->send($email);
         }
+
+
 
         $entityManagerInterface->persist($command);
         $entityManagerInterface->flush();
